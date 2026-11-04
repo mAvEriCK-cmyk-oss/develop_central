@@ -36,6 +36,9 @@ jobs:
             "10-pr-8-fusionado"
             "11-pr-7-fusionado"
             "12-tablero-documentado"
+            "14-fork-companero"
+            "15-projects-del-central"
+            "16-pr-9-reviews"
           )
           urls=(
             "$base/tree/develop"
@@ -50,6 +53,9 @@ jobs:
             "$base/pull/8"
             "$base/pull/7"
             "$base/blob/develop/TABLERO_Y_EQUIPO.md"
+            "https://github.com/nelson588/develop_persona1"
+            "$base/projects"
+            "$base/pull/9/files"
           )
           for i in "${!names[@]}"; do
             "$chrome" --headless --no-sandbox --disable-gpu --hide-scrollbars --disable-dev-shm-usage --window-size=1440,950 --virtual-time-budget=3500 --screenshot="$PWD/evidencias/${names[$i]}.png" "${urls[$i]}"
