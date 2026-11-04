@@ -1,0 +1,37 @@
+name: Configurar Sprint 1 del laboratorio
+on:
+  push:
+    paths:
+      - '.github/workflows/configurar-sprint.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  setup-milestone:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Crear milestone de Sprint 1 si no existe
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Sprint 1 – Mejoras a la App Ágil';
+            const { owner, repo } = context.repo;
+            const milestones = await github.paginate(github.rest.issues.listMilestones, {owner,repo,state:'all',per_page:100});
+            let milestone = milestones.find(item => item.title===title);
+            if (!milestone) {
+              const response=await github.rest.issues.createMilestone({owner,repo,title,description:'Laboratorio Semana 12 SENATI - seis historias de usuario'});
+              milestone=response.data;
+            }
+            const issueLabels = {
+              1:['documentation','priority-medium'],
+              2:['feature','priority-medium'],
+              3:['enhancement','priority-medium'],
+              4:['bug','priority-high'],
+              5:['documentation','priority-medium'],
+              6:['feature','priority-high']
+            };
+            for (const [number, labels] of Object.entries(issueLabels)) {
+              await github.rest.issues.update({owner,repo,issue_number:Number(number),milestone:milestone.number,labels});
+            }
+            core.info('Milestone asignado: ' + milestone.html_url);
