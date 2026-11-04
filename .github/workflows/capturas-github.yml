@@ -1,0 +1,33 @@
+name: Evidencias reales de GitHub - laboratorio SENATI
+on:
+  push:
+    paths:
+      - '.github/workflows/capturas-github.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capturas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Capturar pantallas públicas del repositorio
+        shell: bash
+        run: |
+          set -e
+          mkdir -p evidencias
+          chrome="$(command -v google-chrome || command -v google-chrome-stable || true)"
+          if [ -z "$chrome" ]; then echo "Google Chrome no disponible"; exit 1; fi
+          base="https://github.com/${GITHUB_REPOSITORY}"
+          names=("01-repositorio-develop" "02-ramas" "03-issues" "04-milestone" "05-pr-files-changed" "06-pr-revision-pendiente" "07-historial-commits")
+          urls=("$base/tree/develop" "$base/branches" "$base/issues" "$base/milestone/1" "$base/pull/8/files" "$base/pull/8" "$base/commits/develop")
+          for i in "${!names[@]}"; do
+            echo "Capturando ${urls[$i]}"
+            "$chrome" --headless --no-sandbox --disable-gpu --hide-scrollbars --disable-dev-shm-usage --window-size=1440,950 --virtual-time-budget=7000 --screenshot="$PWD/evidencias/${names[$i]}.png" "${urls[$i]}"
+            test -s "evidencias/${names[$i]}.png"
+          done
+      - name: Subir capturas originales como evidencia
+        uses: actions/upload-artifact@v4
+        with:
+          name: SENATI-capturas-reales-GitHub
+          path: evidencias/*.png
+          retention-days: 30
