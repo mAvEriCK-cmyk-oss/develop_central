@@ -1,4 +1,4 @@
-name: Evidencias reales de GitHub - laboratorio SENATI
+name: Capturas reales y código SENATI (versión final)
 on:
   push:
     paths:
@@ -7,27 +7,64 @@ on:
 permissions:
   contents: read
 jobs:
-  capturas:
+  evidencias:
     runs-on: ubuntu-latest
     steps:
-      - name: Capturar pantallas públicas del repositorio
+      - name: Descargar rama develop real
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+      - name: Tomar capturas verificables
         shell: bash
         run: |
           set -e
-          mkdir -p evidencias
+          mkdir -p evidencias codigo
+          cp index.html script.js styles.css README.md TABLERO_Y_EQUIPO.md codigo/
           chrome="$(command -v google-chrome || command -v google-chrome-stable || true)"
-          if [ -z "$chrome" ]; then echo "Google Chrome no disponible"; exit 1; fi
+          test -n "$chrome"
           base="https://github.com/${GITHUB_REPOSITORY}"
-          names=("01-repositorio-develop" "02-ramas" "03-issues" "04-milestone" "05-pr-files-changed" "06-pr-revision-pendiente" "07-historial-commits")
-          urls=("$base/tree/develop" "$base/branches" "$base/issues" "$base/milestone/1" "$base/pull/8/files" "$base/pull/8" "$base/commits/develop")
+          names=(
+            "01-repositorio-develop"
+            "02-ramas"
+            "03-issues"
+            "04-milestone"
+            "05-pr-11-fusionado"
+            "06-pr-9-revision-pendiente"
+            "07-historial-commits-develop"
+            "08-archivo-index-modificado"
+            "09-pr-9-files-changed"
+            "10-pr-8-fusionado"
+            "11-pr-7-fusionado"
+            "12-tablero-documentado"
+          )
+          urls=(
+            "$base/tree/develop"
+            "$base/branches"
+            "$base/issues"
+            "$base/milestone/1"
+            "$base/pull/11"
+            "$base/pull/9"
+            "$base/commits/develop"
+            "$base/blob/develop/index.html"
+            "$base/pull/9/files"
+            "$base/pull/8"
+            "$base/pull/7"
+            "$base/blob/develop/TABLERO_Y_EQUIPO.md"
+          )
           for i in "${!names[@]}"; do
-            echo "Capturando ${urls[$i]}"
-            "$chrome" --headless --no-sandbox --disable-gpu --hide-scrollbars --disable-dev-shm-usage --window-size=1440,950 --virtual-time-budget=7000 --screenshot="$PWD/evidencias/${names[$i]}.png" "${urls[$i]}"
+            "$chrome" --headless --no-sandbox --disable-gpu --hide-scrollbars --disable-dev-shm-usage --window-size=1440,950 --virtual-time-budget=3500 --screenshot="$PWD/evidencias/${names[$i]}.png" "${urls[$i]}"
             test -s "evidencias/${names[$i]}.png"
           done
-      - name: Subir capturas originales como evidencia
+          python3 -m http.server 8765 >/tmp/senati-http.log 2>&1 &
+          server=$!
+          sleep 2
+          "$chrome" --headless --no-sandbox --disable-gpu --hide-scrollbars --disable-dev-shm-usage --window-size=1440,950 --virtual-time-budget=4000 --screenshot="$PWD/evidencias/13-aplicacion-web-local.png" "http://127.0.0.1:8765/index.html"
+          kill "$server" || true
+      - name: Publicar capturas reales y código
         uses: actions/upload-artifact@v4
         with:
-          name: SENATI-capturas-reales-GitHub
-          path: evidencias/*.png
+          name: SENATI-evidencias-y-codigo
+          path: |
+            evidencias/*.png
+            codigo/*
           retention-days: 30
