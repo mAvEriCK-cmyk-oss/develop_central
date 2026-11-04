@@ -1,0 +1,49 @@
+name: Pruebas de la aplicación web SENATI
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar archivos obligatorios
+        run: |
+          test -s index.html
+          test -s script.js
+          test -s styles.css
+          test -s README.md
+      - name: Validar sintaxis JavaScript
+        run: node --check script.js
+      - name: Verificar estructuras del tablero
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from html.parser import HTMLParser
+          import re
+          html=Path('index.html').read_text(encoding='utf-8')
+          script=Path('script.js').read_text(encoding='utf-8')
+          css=Path('styles.css').read_text(encoding='utf-8')
+          class Inspector(HTMLParser):
+            def __init__(self):
+              super().__init__()
+              self.ids=set()
+              self.scripts=[]
+            def handle_starttag(self,tag,attrs):
+              d=dict(attrs)
+              if d.get('id'): self.ids.add(d['id'])
+              if tag=='script' and d.get('src'): self.scripts.append(d['src'])
+          i=Inspector(); i.feed(html)
+          required={'page-teoria','page-guia','page-kanban','col-todo','col-progress','col-review','col-done','taskForm','taskTitle','taskCategory'}
+          assert required.issubset(i.ids), f'Faltan IDs: {required-i.ids}'
+          assert 'script.js' in i.scripts
+          assert 'styles.css' in html
+          assert all(x in script for x in ['localStorage','confirm','moveTask','renderTasks','deleteTask','trim()'])
+          assert '.kanban-card' in css
+          print('SENATI: verificación de archivos, navegación y tablero superada')
+          PY
