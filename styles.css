@@ -1,1 +1,146 @@
-body{font-family:system-ui,Arial,sans-serif;background:#f8f9fa}.nav-link{cursor:pointer}.column{background:#fff;border-radius:10px;border-top:4px solid #0d6efd;padding:14px;min-height:320px;box-shadow:0 2px 10px #0001}.kanban-card{padding:12px;margin:12px 0;border-left:5px solid #0d6efd!important;background:#fff;border-radius:8px;overflow-wrap:anywhere;box-shadow:0 2px 7px #0001}.kanban-card:hover{transform:translateY(-2px)}.badge-scrum{background:#0d6efd}.badge-kanban{background:#198754}.badge-xp{background:#dc3545}.kanban-list:empty:after{content:"Sin tareas";display:block;text-align:center;color:#6c757d;padding:22px;border:1px dashed #ced4da}button:focus-visible,a:focus-visible{outline:3px solid #ffbf47;outline-offset:2px}@media(max-width:767px){.column{min-height:125px}}
+/* US-03 | Propuesta de mejora visual para revisión del segundo integrante.
+   No representa una contribución autenticada desde su cuenta personal. */
+
+:root {
+  --senati-azul: #164e83;
+  --senati-azul-oscuro: #113b65;
+  --fondo: #f5f8fc;
+  --borde: #dde6ef;
+  --texto: #203348;
+  --sombra: 0 4px 15px rgba(29, 57, 90, .08);
+}
+
+body {
+  margin: 0;
+  color: var(--texto);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--fondo) !important;
+  line-height: 1.55;
+}
+
+.navbar {
+  border-bottom: 3px solid #fbbf24;
+}
+
+.navbar-brand {
+  letter-spacing: .015em;
+}
+
+.nav-link {
+  cursor: pointer;
+  border-radius: .4rem;
+  margin-left: .3rem;
+  transition: background-color .2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: rgba(255,255,255,.13);
+}
+
+.page-section > header {
+  background: linear-gradient(115deg, var(--senati-azul-oscuro), #176eae) !important;
+  box-shadow: var(--sombra);
+}
+
+.page-section .card {
+  border: 1px solid var(--borde) !important;
+  border-radius: 12px;
+  box-shadow: var(--sombra);
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.page-section .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 9px 25px rgba(29,57,90,.11);
+}
+
+.page-section .card h2 {
+  color: var(--senati-azul);
+  font-weight: 700;
+}
+
+.column {
+  min-height: 310px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-top: 5px solid #7089a1;
+  border-radius: 12px;
+  box-shadow: var(--sombra);
+}
+
+.col-md-3:nth-child(2) .column { border-top-color: #e9ac21; }
+.col-md-3:nth-child(3) .column { border-top-color: #3a9ac0; }
+.col-md-3:nth-child(4) .column { border-top-color: #25875d; }
+
+.kanban-card {
+  padding: 12px 13px;
+  margin: 12px 0;
+  border: 1px solid #e0e7ee !important;
+  border-left: 4px solid var(--senati-azul) !important;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(16, 51, 85, .06);
+  overflow-wrap: anywhere;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.kanban-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px rgba(16,51,85,.12);
+}
+
+.kanban-card .btn {
+  min-height: 30px;
+  min-width: 33px;
+}
+
+.badge-scrum { background: #2057a9; }
+.badge-kanban { background: #197947; }
+.badge-xp { background: #bb3850; }
+
+.kanban-list:empty::after {
+  content: "Sin tareas";
+  display: block;
+  margin-top: 12px;
+  padding: 24px 10px;
+  text-align: center;
+  color: #5f7083;
+  border: 1px dashed #bac9d8;
+  border-radius: 8px;
+  background: #f9fbfe;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #e9a400 !important;
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .navbar .container {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: .4rem;
+  }
+  .navbar-nav { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .nav-link { margin: 0 .2rem; padding: .25rem .4rem; }
+}
+
+@media (max-width: 767px) {
+  .column { min-height: 135px; }
+  .page-section > header { padding: 1.4rem !important; }
+  .page-section > header h1 { font-size: 1.6rem; }
+  .page-section .card:hover { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
