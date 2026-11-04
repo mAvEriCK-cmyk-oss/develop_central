@@ -1,0 +1,23 @@
+name: Intentar crear GitHub Project del Sprint 1
+on:
+  push:
+    paths:
+      - '.github/workflows/configurar-project.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: read
+jobs:
+  configurar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const { user } = await github.graphql('query($login:String!){user(login:$login){id}}',{login:owner});
+            const create = await github.graphql(
+              'mutation($ownerId:ID!,$title:String!){createProjectV2(input:{ownerId:$ownerId,title:$title}){projectV2{id,url}}}',
+              {ownerId:user.id,title:'Kanban – Laboratorio Ágil'}
+            );
+            core.info('Project creado: '+create.createProjectV2.projectV2.url);
